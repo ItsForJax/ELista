@@ -1,8 +1,7 @@
-import { FlatList, SafeAreaView, StyleSheet, Text, View, Image } from 'react-native';
+import { TouchableOpacity, FlatList, SafeAreaView, StyleSheet, Text, View, Image } from 'react-native';
 import colors from '../components/colors';
-import Card from '../components/card';
 
-export default function Listahan() {
+export default function Listahan({navigation}) {
 
   const data = [
     { id: '1', name: 'Erickson', utang: 119.99 },
@@ -27,15 +26,18 @@ export default function Listahan() {
     { id: '20', name: 'Quinn', utang: 89.99 },
   ];
   
+  const handleAddToListahan = () => {
+    navigation.navigate('Magpapalista')
+  }
 
   const renderItem = ({ item }) => (
-    <View style={styles.rowItems}>
+    <TouchableOpacity style={styles.rowItems} onPress={()=> navigation.navigate('Utang', item)}>
       <Image source={require('../assets/PlaceHolder.png')} style={{ height: 40, width: 40 }} resizeMode='contain' />
       <View>
         <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
         <Text style={{ fontSize: 10 }}>{item.utang}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -47,6 +49,9 @@ export default function Listahan() {
         keyExtractor={(item) => item.id}
         style={{width: '100%'}}
       />
+      <TouchableOpacity style={styles.addIcon} onPress={handleAddToListahan}>
+        <Image source={require('../assets/carbon_add-filled.png')} resizeMode='contain' style={{width: 60, height: 60}}/>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -55,7 +60,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-    paddingTop: 20
   },
   rowItems: {
     width: '95%',
@@ -73,6 +77,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 25,
     textAlign: 'center',
-    marginBottom: 10
+    marginVertical: 10
+  },
+  addIcon: {
+    position: 'absolute',
+    right: 50,
+    bottom: 50,
+    width: 60,
+    height: 60,
   }
 });
