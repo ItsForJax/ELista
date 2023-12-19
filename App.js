@@ -1,11 +1,12 @@
-import { StyleSheet, Text, View } from 'react-native';
-import Screens from './screens/Screens';
+import {StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import AppNavigation from './navigation/appNavigation';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Screens.Listahan/>
-    </View>
+    <NavigationContainer>
+      <AppNavigation/>
+    </NavigationContainer>
   );
 }
 
