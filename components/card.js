@@ -1,16 +1,16 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import colors from './colors';
 
-const Card = ({ name, total }) => {
+const Card = (props) => {
   return (
-    <View style={styles.card}>
+    <Pressable style={styles.card} onPress={() => props.navigation.navigate('Utang', props.prop)}>
       <Image source={require('../assets/PlaceHolder.png')} resizeMode='contain' style={styles.icon}/>
       <View style={styles.nameSection}>
-        <Text style={styles.name}>{name}</Text>
-        <Text style={styles.total}>Utang: {total}</Text>
+        <Text style={styles.name}>{props.prop.name}</Text>
+        <Text style={styles.total}>Utang: {props.prop.utang}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 };
 
@@ -21,7 +21,8 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 15,
     flexDirection: 'row',
-    gap: 10
+    gap: 10,
+    marginBottom: 10,
   },
   name: {
     fontSize: 20,
