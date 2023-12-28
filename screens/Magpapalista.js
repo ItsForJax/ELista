@@ -1,8 +1,29 @@
 import { TextInput, SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import {doc,db,getFirestore,collection,addDoc,getDocs, deleteDoc} from "../firebase/firebaseConfig";
 import colors from '../components/colors';
+import { useState } from 'react';
 import globalButton from '../components/button';
 
 export default function Magpapalista({navigation}) {
+
+  const [utang, setUtang] = useState(0);
+  const [umutang, setUmutang] = useState('');
+
+  const addMangungutang = async() => {
+    try {
+      const docRef = await addDoc(collection(db, "Listahan"), {
+        name: umutang,
+        utang: utang
+      });
+      console.log("Document written with ID: ", docRef.id);
+      setUmutang("");
+      setUtang(0);
+      navigation.navigate('Listahan')
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Magpapalista</Text>
@@ -23,14 +44,15 @@ export default function Magpapalista({navigation}) {
       <View style={{}}>
         <Text style={{width: '90%', alignSelf: 'center', fontWeight: 'bold'}}>Name</Text>
         <View style={styles.inputName}>
-          <TextInput placeholder='Enter Name' style={{textAlign: 'center'}}/>
+          <TextInput  placeholder='Enter Name' 
+                      style={{textAlign: 'center'}} 
+                      onChangeText={(text) => setUmutang(text)}/>
         </View>
       </View>
 
       <View style={{flexDirection: 'row', justifyContent: 'center', gap: 20, position: 'absolute', alignSelf: 'center', bottom: 50}}>
         <TouchableOpacity style={globalButton.button} onPress={() => {
-          navigation.navigate('Listahan')
-          //add snackbar here
+          addMangungutang()
           }}>
          <Text style={globalButton.buttonText}>ADD PERSON</Text>
         </TouchableOpacity> 
