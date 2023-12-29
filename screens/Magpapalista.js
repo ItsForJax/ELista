@@ -3,19 +3,43 @@ import {doc,db,getFirestore,collection,addDoc,getDocs, deleteDoc} from "../fireb
 import colors from '../components/colors';
 import { useState } from 'react';
 import globalButton from '../components/button';
+import { useEffect } from 'react';
 
 export default function Magpapalista({navigation}) {
 
   const [utang, setUtang] = useState(0);
   const [umutang, setUmutang] = useState('');
 
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+
+  useEffect(() => {
+    // Update the currentDateTime every second
+    const intervalId = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
+
+    // Clean-up function to clear the interval when the component is unmounted
+    return () => clearInterval(intervalId);
+  }, []); // The empty dependency array [] means this effect will run once after the initial render
+
+  // Format the date and time without seconds and in MM/DD/YY format
+  const formattedDateTime = currentDateTime.toLocaleString('en-US', {
+    month: '2-digit',
+    day: '2-digit',
+    year: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+
   const addMangungutang = async() => {
     try {
       const docRef = await addDoc(collection(db, "Listahan"), {
         name: umutang,
-        utang: utang
+        utang: utang,
+        lista: []
       });
-      console.log("Document written with ID: ", docRef.id);
+      console.log("Document written with ID: ", docRef.id, currentDateTime );
       setUmutang("");
       setUtang(0);
       navigation.navigate('Listahan')
