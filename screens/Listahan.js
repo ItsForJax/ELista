@@ -26,7 +26,7 @@ export default function Listahan({navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       getUtangList();
-      console.log('Refresh')
+      console.log(utangList.id)
     }, [])
   );
 
@@ -35,7 +35,7 @@ export default function Listahan({navigation}) {
       <Text style={styles.title}>Listahan</Text>
         <FlatList
         data={utangList}
-        renderItem={({item}) => <Card prop={item} navigation={navigation}/>}
+        renderItem={({item}) => <Card prop={item} navigation={navigation} id={utangList.id}/>}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{width: '100%', alignItems: 'center'}}
       />
