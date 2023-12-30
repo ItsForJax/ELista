@@ -5,19 +5,28 @@ import Card from '../components/card';
 import React, { useState, useEffect} from 'react';
 import { useFocusEffect } from '@react-navigation/native'; 
 
-export default function Listahan({navigation}) {
+/**
+ * Listahan screen component.
+ * 
+ * Displays a list of debts. Allows adding a new debt.
+ * Fetches debts from Firestore and renders them in a FlatList.
+ * 
+ * Usage:
+ * <Listahan navigation={navigation} />
+ */
+export default function Listahan({ navigation }) {
 
   const [utangList, setUtangList] = useState([]);
-  
+
   const handleAddToListahan = () => {
     navigation.navigate('Magpapalista')
   }
 
   //Getting all the Data
-  const getUtangList = async() => {
+  const getUtangList = async () => {
     const querySnapshot = await getDocs(collection(db, "Listahan"));
     setUtangList(
-      querySnapshot.docs.map((doc)=>({
+      querySnapshot.docs.map((doc) => ({
         ...doc.data(), id: doc.id
       }))
     )
@@ -26,25 +35,30 @@ export default function Listahan({navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       getUtangList();
-      console.log(utangList.id)
+      try {
+        console.log("listahan.js: ", utangList[1].id)
+      } catch (e) {
+        console.log("Error in console log:", e);
+      }
     }, [])
   );
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Listahan</Text>
-        <FlatList
+      <FlatList
         data={utangList}
-        renderItem={({item}) => <Card prop={item} navigation={navigation} id={utangList.id}/>}
+        renderItem={({ item }) => <Card prop={item} navigation={navigation} id={utangList.id} />}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{width: '100%', alignItems: 'center'}}
+        contentContainerStyle={{ width: '100%', alignItems: 'center' }}
       />
       <TouchableOpacity style={styles.addIcon} onPress={handleAddToListahan}>
-        <Image source={require('../assets/carbon_add-filled.png')} resizeMode='contain' style={{width: 60, height: 60}}/>
+        <Image source={require('../assets/carbon_add-filled.png')} resizeMode='contain' style={{ width: 60, height: 60 }} />
       </TouchableOpacity>
     </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
