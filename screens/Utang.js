@@ -1,9 +1,9 @@
-import { Image, Modal, StyleSheet, Text, View, TextInput, Pressable, TouchableOpacity, FlatList} from 'react-native';
+import { Image, Modal, StyleSheet, Text, View, TextInput, Pressable, TouchableOpacity, FlatList, Alert} from 'react-native';
 import Lista from '../components/lista';
 import {doc,db,getFirestore,collection,addDoc,getDocs, setDoc, updateDoc, arrayUnion} from "../firebase/firebaseConfig";
 import React, { useEffect, useState } from 'react';
 import colors from '../components/colors';
-import { useFocusEffect } from '@react-navigation/native'; 
+import { MaterialIcons } from '@expo/vector-icons'; 
 
 export default function Utang({route}) {
   
@@ -38,20 +38,12 @@ export default function Utang({route}) {
     hour12: true,
   });
 
-  useFocusEffect(
-    React.useCallback(() => {
-      route.params.getUtangList
-    }, [])
-  );
-
-
   const addUtang = async () => {
     try {
       const documentRef = doc(db, "Listahan", route.params.id,);
 
       let newObject = { item: item, price: price, quantity: qty, date: formattedDateTime };
-  
-      // Use arrayUnion to add the new map to the existing array
+
       await updateDoc(documentRef, {
         lista: arrayUnion(newObject),
       });
@@ -67,18 +59,43 @@ export default function Utang({route}) {
     }
   };
   
+  const deleteAll = async () => {
+    try {
+      const documentRef = doc(db, "Listahan", route.params.id,);
   
+      await updateDoc(documentRef, {
+        lista: [],
+      });
+  
+      console.log("All lista Deleted");
+    } catch (error) {
+      console.error("Error deleting array element: ", props.id ,error);
+    }
+  };
   
 
   return (
     <View style={styles.container}>
-        <Text style={{width: '95%', marginTop: 10, fontSize: 17, fontWeight: '800'}}>Name: <Text style={{fontWeight: '400'}}>{route.params.name}</Text></Text>
-        <Text style={{width: '95%', fontSize: 17, fontWeight: '800'}}>Utang: <Text style={{fontWeight: '400'}}>{route.params.utang}</Text></Text>
-
+        <View style={{flexDirection: 'row', width: '95%', justifyContent: 'space-between'}}>
+          <View style={{flex: 1}}>
+            <Text style={{width: '95%', marginTop: 10, fontSize: 17, fontWeight: '800'}}>Name: <Text style={{fontWeight: '400'}}>{route.params.name}</Text></Text>
+            <Text style={{width: '95%', fontSize: 17, fontWeight: '800'}}>Utang: <Text style={{fontWeight: '400'}}>{route.params.utang}</Text></Text>
+          </View>
+          {
+            lista.length > 0 ?
+          <Pressable onPress={()=>{Alert.alert("Delete", "Delete All Items?", [
+            {text: "Cancel"},
+            {text: "OK", onPress: () => {deleteAll()}}
+          ])}} style={{justifyContent: 'center'}}>
+            <MaterialIcons name="delete" size={35} color="red" />
+          </Pressable> : null
+          }
+        </View>
+         
         <Text style={{fontWeight: '800', fontSize: 20, marginVertical: 10, includeFontPadding: false}}>Lista</Text>
         <FlatList
         data={lista}
-        renderItem={({item})=><Lista item={item.item} quantity={item.quantity} price={item.price} date={item.date} id={route.params.id}/>}
+        renderItem={({item})=><Lista props={item} id={route.params.id}/>}
         keyExtractor={(item)=>item.item}
         contentContainerStyle={{width: '100%', alignItems: 'center'}}
         />
