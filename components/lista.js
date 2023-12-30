@@ -1,38 +1,59 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, Pressable, Modal } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable, Modal, TouchableOpacity, Alert } from 'react-native';
 import colors from './colors';
+import { MaterialIcons } from '@expo/vector-icons'; 
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import {doc,db,getFirestore,collection,addDoc,getDocs, setDoc, updateDoc, arrayRemove} from "../firebase/firebaseConfig";
 
 const Lista = (props) => {
 
-  const handlePaste = (event) => {
-    // Prevent paste behavior
-    event.preventDefault();
+  const [qty, setQty] = useState(props.props.quantity);
+  const [price, setPrice] = useState(props.props.price);
+  const [item, setItem] = useState(props.props.item);
+  const [isVisible, setIsVisible] = useState(false);
+  const [deleteVisible, setdeleteVisible] = useState(false);
+
+  const deleteUtang = async () => {
+    try {
+      const documentRef = doc(db, "Listahan", props.id,);
+  
+      await updateDoc(documentRef, {
+        lista: arrayRemove(props.props),
+      });
+
+      setIsVisible(false)
+  
+      console.log(props.id, " Deleted");
+    } catch (error) {
+      console.error("Error deleting array element: ", props.id ,error);
+    }
   };
 
-  const [qty, setQty] = useState(props.quantity);
-  const [price, setPrice] = useState(props.price);
-  const [item, setItem] = useState(props.item);
-
-  const [isVisible, setIsVisible] = useState(false);
-
   useEffect(() => {
-    console.log("lista.js: ",props.id);
+    console.log("lista.js: ",props.props);
   }, []);
 
   return (
-    <Pressable style={styles.card} onPress={() => setIsVisible(true)}>
+    <TouchableOpacity style={styles.card} onPress={() => setIsVisible(true)} onLongPress={()=> setdeleteVisible(!deleteVisible)}>
 
       <View style={styles.itemSection}>
-        <Text style={styles.item}>{props.item}<Text style={styles.quantity}> ({props.quantity})</Text></Text>
-        <Text style={styles.price}>Price: {props.price}</Text>
-        <Text style={styles.date}>{props.date}</Text>
+        <Text style={styles.item}>{props.props.item}<Text style={styles.quantity}> ({props.props.quantity})</Text></Text>
+        <Text style={styles.price}>Price: {props.props.price}</Text>
+        <Text style={styles.date}>{props.props.date}</Text>
       </View>
 
       <View style={styles.totalSection}>
         <Text style={styles.total}>Total</Text>
-        <Text style={{...styles.total, fontWeight: 'bold', fontSize: 18}}>₱{props.quantity * props.price}</Text>
+        <Text style={{...styles.total, fontWeight: 'bold', fontSize: 18}}>₱{props.props.quantity * props.props.price}</Text>
       </View>
+
+      {deleteVisible ? 
+      <Pressable onPress={()=>{deleteUtang()}} style={{justifyContent: 'center'}}>
+        <MaterialIcons name="delete" size={35} color="red" />
+      </Pressable> 
+      : null
+      }
+        
 
       <Modal visible={isVisible} onRequestClose={()=>setIsVisible(false)} animationType='slide' style={{backgroundColor: 'rgba(0,0,0,0)'}}>
         <View style={styles.modalContainer}>
@@ -73,7 +94,7 @@ const Lista = (props) => {
 
       </Modal>
       
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 
