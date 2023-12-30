@@ -5,7 +5,7 @@ import { useState } from 'react';
 import globalButton from '../components/button';
 import { useEffect } from 'react';
 
-export default function Magpapalista({navigation}) {
+export default function Magpapalista({ navigation }) {
 
   const [utang, setUtang] = useState(0);
   const [umutang, setUmutang] = useState('');
@@ -32,14 +32,14 @@ export default function Magpapalista({navigation}) {
     hour12: true,
   });
 
-  const addMangungutang = async() => {
+  const addMangungutang = async () => {
     try {
       const docRef = await addDoc(collection(db, "Listahan"), {
         name: umutang,
-        utang: utang,
+        utang: utang, // set utang to total quantity * price
         lista: []
       });
-      console.log("Document written with ID: ", docRef.id, currentDateTime );
+      console.log("Document written with ID: ", docRef.id, currentDateTime);
       setUmutang("");
       setUtang(0);
       navigation.navigate('Listahan')
@@ -52,40 +52,42 @@ export default function Magpapalista({navigation}) {
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Magpapalista</Text>
       <View style={styles.addImage}>
-        <Image  source={require('../assets/PlaceHolder.png')} 
-                resizeMode='contain'
-                style={{width: '95%', height: '95%', alignSelf: 'center', opacity: .5}}/>
-        <Image  source={require('../assets/carbon_add-filled.png')} 
-                resizeMode='contain' 
-                style={{width: 30, 
-                        height: 30, 
-                        position: 'absolute',
-                        right: 10,
-                        bottom: 10,
-              }}/>
+        <Image source={require('../assets/PlaceHolder.png')}
+          resizeMode='contain'
+          style={{ width: '95%', height: '95%', alignSelf: 'center', opacity: .5 }} />
+        <Image source={require('../assets/carbon_add-filled.png')}
+          resizeMode='contain'
+          style={{
+            width: 30,
+            height: 30,
+            position: 'absolute',
+            right: 10,
+            bottom: 10,
+          }} />
       </View>
 
       <View style={{}}>
-        <Text style={{width: '90%', alignSelf: 'center', fontWeight: 'bold'}}>Name</Text>
+        <Text style={{ width: '90%', alignSelf: 'center', fontWeight: 'bold' }}>Name</Text>
         <View style={styles.inputName}>
-          <TextInput  placeholder='Enter Name' 
-                      style={{textAlign: 'center'}} 
-                      onChangeText={(text) => setUmutang(text)}/>
+          <TextInput placeholder='Enter Name'
+            style={{ textAlign: 'center' }}
+            onChangeText={(text) => setUmutang(text)} />
         </View>
       </View>
 
-      <View style={{flexDirection: 'row', justifyContent: 'center', gap: 20, position: 'absolute', alignSelf: 'center', bottom: 50}}>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 20, position: 'absolute', alignSelf: 'center', bottom: 50 }}>
         <TouchableOpacity style={globalButton.button} onPress={() => {
           addMangungutang()
-          }}>
-         <Text style={globalButton.buttonText}>ADD PERSON</Text>
-        </TouchableOpacity> 
+        }}>
+          <Text style={globalButton.buttonText}>ADD PERSON</Text>
+        </TouchableOpacity>
       </View>
-      
-      
+
+
     </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
